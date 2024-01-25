@@ -1,6 +1,6 @@
 import { Capability, RegisterKind } from "pepr";
 import { S3Bucket } from "./s3/crd";
-import { S3 } from "./s3/storage";
+import { S3 } from "./s3/bucket";
 
 export const ObjectStorageOperator = new Capability({
   name: "object-storage-operator",
@@ -19,7 +19,7 @@ RegisterKind(S3Bucket, {
 When(S3Bucket)
   .IsCreatedOrUpdated()
   .InNamespace("storage")
-  .Watch(async () => {
+  .Watch(async bucket => {
     const s3 = new S3();
-    await s3.createBucket(S3Bucket);
+    await s3.createBucket(bucket);
   });
