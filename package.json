@@ -1,0 +1,36 @@
+{
+  "name": "object-storage-operator",
+  "version": "0.0.1",
+  "description": "A Kubernetes Operator for managing object storage buckets.",
+  "keywords": [
+    "pepr",
+    "k8s",
+    "policy-engine",
+    "pepr-module",
+    "security"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "pepr": {
+    "name": "object-storage-operator",
+    "uuid": "object-storage-operator",
+    "onError": "reject",
+    "alwaysIgnore": {
+      "namespaces": [],
+      "labels": []
+    },
+    "includedFiles": [],
+    "env": {}
+  },
+  "scripts": {
+    "build": "npx pepr build && cp dist/pepr-module-object-storage-operator.yaml manifests/",
+    "k3d-setup": "k3d cluster delete pepr-dev && k3d cluster create pepr-dev --k3s-arg '--debug@server:0' --wait && kubectl rollout status deployment -n kube-system"
+  },
+  "dependencies": {
+    "pepr": "0.23.1"
+  },
+  "devDependencies": {
+    "typescript": "5.3.3"
+  }
+}

@@ -1,0 +1,8 @@
+apiVersion: dashdays.dev/v1
+kind: S3Bucket
+metadata:
+  name: loki
+  namespace: storage
+spec:
+  name: loki
+  region: us-west-2

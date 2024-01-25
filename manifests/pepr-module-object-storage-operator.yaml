@@ -1,0 +1,338 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pepr-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pepr-object-storage-operator
+rules:
+  - apiGroups:
+      - '*'
+    resources:
+      - '*'
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: pepr-object-storage-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: pepr-object-storage-operator
+subjects:
+  - kind: ServiceAccount
+    name: pepr-object-storage-operator
+    namespace: pepr-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pepr-object-storage-operator
+  namespace: pepr-system
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pepr-object-storage-operator-api-token
+  namespace: pepr-system
+type: Opaque
+data:
+  value: >-
+    ODdjNDJmNDFhZDgyNmJjZDNmYWVkOGU4NThlMGYwODljZGY4Nzg5OTFhMGU5ZWYzZDk5ODhhOTY0YjVhYzdmMg==
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pepr-object-storage-operator-tls
+  namespace: pepr-system
+type: kubernetes.io/tls
+data:
+  tls.crt: >-
+    LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tDQpNSUlDdGpDQ0FaNmdBd0lCQWdJQkFUQU5CZ2txaGtpRzl3MEJBUXNGQURBQU1CNFhEVEkwTURFeU5USXdNemcxDQpORm9YRFRJMU1ERXlOVEl3TXpnMU5Gb3dBRENDQVNJd0RRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DDQpnZ0VCQU5DZzh6bVkzaFBZRUZIdUxJRlZ6S2lFMWFqWmlrL0JRZ0lwdm5YMnN4ZmNCQU9rMXhndjhFTWlkMlBXDQpDYWVyd2xBWUVhaTBRWHNkbWVQaDV0Ri9pVktTNWhMWGFmK20rdnVrTnNSQkJRSWJxQU5MQ2hjQmpDNG9EK0w4DQp1dUZzd0FrZEI2NGdrbzZMTUpZV2hQMHRTMTAwa1VpUmFtUVVlSXZmdnUvbmYwRnZMdXpLcTQ2TEdSeWk4bWJzDQpzWGVMcGdweXVmdHhkMlg3dmRkcW9LYm5jVUREbmdUWWEweDJyOVZudTRiNXNpRGlUcXBzNWw4VmhhMEhBRy9MDQpiWk1nS0RkY3B5MGFLdUlEY2hlNDU0MUpwNHd2K080OWkvQXYrekQ1MjRRRTFjZzZ3ZG9YL1I2c2cvWXhXTzJ5DQpneUg1MXZMWE5mL2k2ZE1OQ096VGROTndkOFVDQXdFQUFhTTdNRGt3TndZRFZSMFJCREF3TG9Jc2NHVndjaTF2DQpZbXBsWTNRdGMzUnZjbUZuWlMxdmNHVnlZWFJ2Y2k1d1pYQnlMWE41YzNSbGJTNXpkbU13RFFZSktvWklodmNODQpBUUVMQlFBRGdnRUJBQ3NFbTdNM0FjaUNjTTFCVmNiaWdBUjNOd3RNRHlnM0psNVpqa2F4K3ZEc096NXVZQTNpDQoycGpTSkhlTXZ2TGg2M2FMd2NRb3RGeGVOK29hVVlxYi92ZFhnd3NaWUErOEJXbEZZOTlndFd4amdyd0dUZkd0DQo0K1U4dldSaTNTV05kTUxsczY2Vk1TLzEwbytmMlE0VlRqbDY3blcrQW5QZFZzV1hVSmtabVV4L2RkblRDMzh0DQpyM0dHQWtYMUUzYVRkSWg1RjN2TlllZk5hZEZwQVJhbXpUeFF4cnpWNDdnTGpkT2ZpRWo4N0V4OFlPM3NuTHc4DQpheEdWUjRPeHlFTDU3LzlTVlcxM0k4eDJEZnkrQXljWmlwS05jTmJBYzdyV0VnUjlWVWU3NXRoNEhSTjF0UEpyDQpPTmF6RXUwV2tDVk54Y1VaYkJHYzFHYWxCOXFxaDU1VXNXND0NCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0NCg==
+  tls.key: >-
+    LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQ0KTUlJRXBRSUJBQUtDQVFFQTBLRHpPWmplRTlnUVVlNHNnVlhNcUlUVnFObUtUOEZDQWltK2RmYXpGOXdFQTZUWA0KR0Mvd1F5SjNZOVlKcDZ2Q1VCZ1JxTFJCZXgyWjQrSG0wWCtKVXBMbUV0ZHAvNmI2KzZRMnhFRUZBaHVvQTBzSw0KRndHTUxpZ1A0dnk2NFd6QUNSMEhyaUNTam9zd2xoYUUvUzFMWFRTUlNKRnFaQlI0aTkrKzcrZC9RVzh1N01xcg0Kam9zWkhLTHladXl4ZDR1bUNuSzUrM0YzWmZ1OTEycWdwdWR4UU1PZUJOaHJUSGF2MVdlN2h2bXlJT0pPcW16bQ0KWHhXRnJRY0FiOHR0a3lBb04xeW5MUm9xNGdOeUY3am5qVW1uakMvNDdqMkw4Qy83TVBuYmhBVFZ5RHJCMmhmOQ0KSHF5RDlqRlk3YktESWZuVzh0YzEvK0xwMHcwSTdOTjAwM0IzeFFJREFRQUJBb0lCQUFFWVJjdlFxaUpZc1FDUg0KRUtia0daL0NiMXhFWktZQVZHQkRzbERCcU9wd09JMkJWN0gwTngxUEUya21JTSt0Qm54dm5UdHhVMkpQUXpVUA0KaE5aOEcyOGdGTGpXd2JoaytxNWROcWxjZmFkOHd0VmVRZHUyNGNnRjVLRnpEejJxeEZqaWtBZ0JUK3VUYU9wSA0KWWlRY1VQMHQrYkRlWWRITHpBblFpZHE0bXdjYVNSVmlnNDE4OG5rS2phL0syL253M1l0UWwzOTJFa21peDBYNA0Ka0FJc011bUlpRi9UMjZsVlhLc3NZeTVJOEtoRzNFUnpIQTU0Q0NjNmpUNFVVYnBDQnRJaFlPeWFtdy9aUzRURg0KdmF3ZTZYaDJOVHNwdW9ZdUJucTFydjFGM2pzckk1cXFNT0REcXBsa2p0Tyt5Q2hvaGVFam80eFZrQkxKTVlUMg0KTEVrTi9Ra0NnWUVBOWNwVlhJUENlMzNjaDhFOHRkOURhVXdET1NiOVdpc0tsZHpTa25USEdMT2tlT0JLMzNhdw0KN2J0Y0gvOEFJc1pTeXJnYnBqUU1sUFovVVAvV2dNQjBGUU5HQWRZajlpSE9odG1QaHFXV1c3RFBYRDdmL2dQeA0KN3d4SlZEZnJrUVBRVitKclJzNEVuVEpyeWdxUXV4NTU2Q3RkVm9uYUMxSE1rS0RNWkVaTDNPMENnWUVBMlV0eg0KTHlndnJYSlhkZDJLNzhXTzVyS01iTUVzS055YlA5eHgrK2huWHFTNzl3aTIzZUlKZm5aT0ZyZzA1M1kyaDk4dA0KODJDLzVzZSsrZGFpSWt3L3RncHhDN1A4T1VBNFhnTGFkR3h4NlFNaFVraE0raHczbWhTUWZ5UkIxV1VyM3NyNg0KcHhhL2t4cC9YS283R1pEN0dPYTV6NW51QkVVaHVVQm9wQk9iZ3prQ2dZRUFrTW5HQ3grYTIwQkRQcjA0VkRMVw0KOVJwUDg4VGlEZEc1QkpyMmVFdk9WT0RPREY2ai9JdGdva3B5ZEc2MDE4ZFlVZzZ1U3ZQeVRYWC9mZW1YcEhTNg0KYlA1bXFRSktZTjE5V2JhamM3L3JtTXZJK3lBV3R2My84TCtlR3J4dVNoaWpESUpXaTNrbEFxMEhEaGUzTm1NMw0Ka09xcXF5VzlpbGwvVmR0RFMvYVZEZWtDZ1lFQXdmQ0tmTE5VWW0wa1RJbVFZTktsNlpmQXA2eDkrblp6aGpyOQ0KN1FVUGhiUm9JMk0rdTZqc0tsZnkrR291cGN1bmZmdWU2cE1XbENjQmQ4R3VjZ2cxOFFjK3dHQkRKT0lCclQ3RQ0KdFphNDBHeS94ODNLRG8weXZ5M05qZnpSV1dIMEZ1UjVkTHBrQUNwdE5FcW5kdmtrYzZReWdXejB1QkR2dVlVWQ0KSUNGejhsa0NnWUVBcU04U25lNGZPZFRCVXJNZDAwcGxTZS9hMGxOVkNRbmRDaE5Ea213RG94ZWQyamowMnM2Tg0KUE56SnFrMW1tUzVhaWRHUURRcG1lSlRZMFFaUjJOa1JpbFBQQi9aN0JhVlgreVdxTmxReUJKcXpXYktGQzJ1OQ0KUDdCTGNiWUJ1ajVsZGdWVWY4Y1Q5RUF0a3BGY1Y1cy9GaXNZRC81N0R3bVNvZmV4OEQ0VnpZYz0NCi0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tDQo=
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pepr-object-storage-operator
+  namespace: pepr-system
+  labels:
+    app: pepr-object-storage-operator
+    pepr.dev/controller: admission
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pepr-object-storage-operator
+      pepr.dev/controller: admission
+  template:
+    metadata:
+      annotations:
+        buildTimestamp: '1706215134720'
+      labels:
+        app: pepr-object-storage-operator
+        pepr.dev/controller: admission
+    spec:
+      priorityClassName: system-node-critical
+      serviceAccountName: pepr-object-storage-operator
+      securityContext:
+        runAsUser: 65532
+        runAsGroup: 65532
+        runAsNonRoot: true
+        fsGroup: 65532
+      containers:
+        - name: server
+          image: ghcr.io/defenseunicorns/pepr/controller:v0.23.1
+          imagePullPolicy: IfNotPresent
+          command:
+            - node
+            - /app/node_modules/pepr/dist/controller.js
+            - e91c89ef67584a9233420846fd5570bcba397229dbe8a61d3536bb346c4bd86d
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+              scheme: HTTPS
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+              scheme: HTTPS
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              memory: 64Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi
+              cpu: 500m
+          env:
+            - name: PEPR_WATCH_MODE
+              value: 'false'
+            - name: PEPR_PRETTY_LOG
+              value: 'false'
+            - name: LOG_LEVEL
+              value: debug
+          securityContext:
+            runAsUser: 65532
+            runAsGroup: 65532
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tls-certs
+              mountPath: /etc/certs
+              readOnly: true
+            - name: api-token
+              mountPath: /app/api-token
+              readOnly: true
+            - name: module
+              mountPath: /app/load
+              readOnly: true
+      volumes:
+        - name: tls-certs
+          secret:
+            secretName: pepr-object-storage-operator-tls
+        - name: api-token
+          secret:
+            secretName: pepr-object-storage-operator-api-token
+        - name: module
+          secret:
+            secretName: pepr-object-storage-operator-module
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pepr-object-storage-operator
+  namespace: pepr-system
+  labels:
+    pepr.dev/controller: admission
+spec:
+  selector:
+    app: pepr-object-storage-operator
+    pepr.dev/controller: admission
+  ports:
+    - port: 443
+      targetPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pepr-object-storage-operator-watcher
+  namespace: pepr-system
+  labels:
+    pepr.dev/controller: watcher
+spec:
+  selector:
+    app: pepr-object-storage-operator-watcher
+    pepr.dev/controller: watcher
+  ports:
+    - port: 443
+      targetPort: 3000
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pepr-object-storage-operator-module
+  namespace: pepr-system
+type: Opaque
+data:
+  module-e91c89ef67584a9233420846fd5570bcba397229dbe8a61d3536bb346c4bd86d.js.gz: >-
+    H4sIAAAAAAAAE61UUW/cNgx+76/QtKGxAVm57DCg8MHFtm4rgi5L0SHoQxCgOonnqNFJGildahj+74PsS5di7fqyN1Ef+ZEiP+qgkPXd5fY96CQN7KyH1xgiYBo2B4UsdFUSWHfP+yoJ7tUeuBgPymVoUejgd7bPqLYO2m9WUz2H2A7hr2wRKh4hIl9uYzeW6JaHOVdDKaDqoSm5VArIxQGQbPAtX8mVPOPCAGm0Mc13P7FXeQvoIQGxy2MM2wVke+VVb33PFmJ2JGbbrO8gkeTiDob7gIba66Ugwe+eERc8Bmf10IDvrYdiQ8RmH0x2xSLQGW0a+I1YPKgdfTDQ8ufd2TO5kis+iRLSfu1hOVvzH3DwvyIGbDlC8eBCuXs10HnvA8JCTlFpoPb6Rji1BVdOk7Beu2zA/GbdgoE/tOM0iaVt1I7bbJ1puY8fWCmUzTZ7+pTpyIyldProxc0X6pOD2rvSZLsDSnRaurc2DUHKkbflzLTLlACZAQcJ5lSNgUNJ9BjWCOox3DR3a2oU9uykaQxsc/8jAR4A29UJa5p7ZdNMkbegk2MYnAu5zFelTMxAdGHYg0+s8bNTQwMl2PNJGIjgDXhty9DmGfGV/H4tz2bw8MsneBriUWkt/0Gu5ZpP0yxZ9Vkh68/eQqedImLwIYE3xLRU8iV4QKtfWW/GUrXVY6jSrSXB/1z/PMuT1xNF0Es+Wjj+7cvrSdHg9bGFS2iF9Wh3FTLrKSmvIewY1KODxPYdykIri3aEebAQehv8RgdPwYF0oa/evSiMZXuWdWEn34376YRZzxbvcmGmk3f1BI6ApVsM98zDPZs1W/ErTznGgAkMo4QqQT+w0lHJLjIllgnYw2M/OkheH1vsu8Kl5AsV1dY6m4bqa9v0v30LjxeLH2F+M9VifHsLvnVT5zfVSij5BnpbFFwGWVcgxh5Dji03im6NGkgaODz6vg5nXNxZb9p/pjzVG1dBLc9p7jeYS7yKphyqWp77Px4qqT7WUcu3Kunbap57VXfPRzUvRGkXVbX8RAlQT/WmIFa+hogX80JXUVz7m3rz5PT0W0Yho4YLFaP1/dWb37t5C7+08u9J7lV88jfRe1WSHAYAAA==
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: peprstores.pepr.dev
+spec:
+  group: pepr.dev
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            data:
+              type: object
+              additionalProperties:
+                type: string
+  scope: Namespaced
+  names:
+    plural: peprstores
+    singular: peprstore
+    kind: PeprStore
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pepr-object-storage-operator-store
+  namespace: pepr-system
+rules:
+  - apiGroups:
+      - pepr.dev
+    resources:
+      - peprstores
+    resourceNames:
+      - ''
+    verbs:
+      - create
+      - get
+      - patch
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pepr-object-storage-operator-store
+  namespace: pepr-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pepr-object-storage-operator-store
+subjects:
+  - kind: ServiceAccount
+    name: pepr-object-storage-operator-store
+    namespace: pepr-system
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pepr-object-storage-operator-watcher
+  namespace: pepr-system
+  labels:
+    app: pepr-object-storage-operator-watcher
+    pepr.dev/controller: watcher
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: pepr-object-storage-operator-watcher
+      pepr.dev/controller: watcher
+  template:
+    metadata:
+      annotations:
+        buildTimestamp: '1706215134720'
+      labels:
+        app: pepr-object-storage-operator-watcher
+        pepr.dev/controller: watcher
+    spec:
+      serviceAccountName: pepr-object-storage-operator
+      securityContext:
+        runAsUser: 65532
+        runAsGroup: 65532
+        runAsNonRoot: true
+        fsGroup: 65532
+      containers:
+        - name: watcher
+          image: ghcr.io/defenseunicorns/pepr/controller:v0.23.1
+          imagePullPolicy: IfNotPresent
+          command:
+            - node
+            - /app/node_modules/pepr/dist/controller.js
+            - e91c89ef67584a9233420846fd5570bcba397229dbe8a61d3536bb346c4bd86d
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+              scheme: HTTPS
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+              scheme: HTTPS
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              memory: 64Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi
+              cpu: 500m
+          securityContext:
+            runAsUser: 65532
+            runAsGroup: 65532
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tls-certs
+              mountPath: /etc/certs
+              readOnly: true
+            - name: module
+              mountPath: /app/load
+              readOnly: true
+          env:
+            - name: PEPR_WATCH_MODE
+              value: 'true'
+            - name: PEPR_PRETTY_LOG
+              value: 'false'
+            - name: LOG_LEVEL
+              value: debug
+      volumes:
+        - name: tls-certs
+          secret:
+            secretName: pepr-object-storage-operator-tls
+        - name: module
+          secret:
+            secretName: pepr-object-storage-operator-module

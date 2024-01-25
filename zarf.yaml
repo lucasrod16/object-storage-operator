@@ -1,0 +1,25 @@
+kind: ZarfPackageConfig
+metadata:
+  name: pepr-object-storage-operator
+  description: 'Pepr Module: A Kubernetes Operator for managing object storage buckets.'
+  url: https://github.com/defenseunicorns/pepr
+  version: 0.0.1
+components:
+  - name: module
+    required: true
+    manifests:
+      - name: module
+        namespace: pepr-system
+        files:
+          - manifests/pepr-module-object-storage-operator.yaml
+          - crds/s3.yaml
+    images:
+      - ghcr.io/defenseunicorns/pepr/controller:v0.23.1
+
+  - name: s3-bucket
+    required: true
+    manifests:
+      - name: s3-bucket
+        namespace: storage
+        files:
+          - manifests/s3.yaml
