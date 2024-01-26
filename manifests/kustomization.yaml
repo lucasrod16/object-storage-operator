@@ -1,0 +1,5 @@
+resources:
+  - pepr-module-object-storage-operator.yaml
+
+patches:
+  - path: patches/add-service-account-annotation.patch.yaml

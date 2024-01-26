@@ -1,0 +1,23 @@
+# eksctl create cluster -f eks.yaml
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: object-storage-operator-dev
+  region: us-west-2
+  version: "1.29"
+
+iam:
+  withOIDC: true
+
+addons:
+  - name: aws-ebs-csi-driver
+    version: "1.27.0"
+    attachPolicyARNs:
+      - arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy
+
+managedNodeGroups:
+- instanceType: t3.small
+  name: object-storage-operator-dev-ng
+  minSize: 3
+  maxSize: 6
+  spot: true

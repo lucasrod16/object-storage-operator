@@ -4,14 +4,21 @@ metadata:
   description: 'Pepr Module: A Kubernetes Operator for managing object storage buckets.'
   url: https://github.com/defenseunicorns/pepr
   version: 0.0.1
+
+variables:
+  - name: S3_ROLE_ARN
+    description: "The ARN of an IAM role to give Pepr necessary permissions to create and delete S3 buckets."
+    prompt: true
+
 components:
-  - name: module
+  - name: object-storage-operator
     required: true
     manifests:
-      - name: module
+      - name: object-storage-operator
         namespace: pepr-system
+        kustomizations:
+          - manifests
         files:
-          - manifests/pepr-module-object-storage-operator.yaml
           - crds/s3.yaml
     images:
       - ghcr.io/defenseunicorns/pepr/controller:v0.23.1
