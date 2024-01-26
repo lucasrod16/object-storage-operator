@@ -8,4 +8,9 @@ export interface ObjectStorage {
    * Creates a new storage bucket.
    */
   createBucket(strategy: a.GenericKind): Promise<void>;
+
+  /**
+   * Deletes a storage bucket.
+   */
+  deleteBucket(strategy: a.GenericKind): Promise<void>;
 }

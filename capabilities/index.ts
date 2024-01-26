@@ -20,6 +20,14 @@ When(S3Bucket)
   .IsCreatedOrUpdated()
   .InNamespace("storage")
   .Watch(async bucket => {
-    const s3 = new S3();
+    const s3 = new S3(bucket.spec.region);
     await s3.createBucket(bucket);
+  });
+
+When(S3Bucket)
+  .IsDeleted()
+  .InNamespace("storage")
+  .Watch(async bucket => {
+    const s3 = new S3(bucket.spec.region);
+    await s3.deleteBucket(bucket);
   });

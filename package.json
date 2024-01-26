@@ -25,12 +25,18 @@
   },
   "scripts": {
     "build": "npx pepr build && cp dist/pepr-module-object-storage-operator.yaml manifests/",
-    "iam:setup": "./hack/iam.sh setup",
-    "iam:teardown": "./hack/iam.sh teardown",
-    "cleanup:cluster": "zarf package remove pepr-object-storage-operator --confirm",
-    "k3d-setup": "k3d cluster delete pepr-dev && k3d cluster create pepr-dev --k3s-arg '--debug@server:0' --wait && kubectl rollout status deployment -n kube-system"
+    "deploy": "npm run build && zarf dev deploy --deploy-set=S3_ROLE_ARN=${S3_ROLE_ARN}",
+    "remove": "zarf package remove pepr-object-storage-operator --confirm",
+    "format": "npx pepr format",
+    "iam:up": "./hack/iam.sh setup",
+    "iam:down": "./hack/iam.sh teardown",
+    "eks:up": "eksctl create cluster -f eks.yaml",
+    "eks:down": "eksctl delete cluster -f eks.yaml",
+    "standup:all": "npm run eks:up && npm run iam:up",
+    "cleanup:all": "npm run iam:down && npm run eks:down"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.499.0",
     "pepr": "0.23.1"
   },
   "devDependencies": {
