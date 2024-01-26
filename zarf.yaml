@@ -22,11 +22,3 @@ components:
           - crds/s3.yaml
     images:
       - ghcr.io/defenseunicorns/pepr/controller:v0.23.1
-
-  - name: s3-bucket
-    required: true
-    manifests:
-      - name: s3-bucket
-        namespace: storage
-        files:
-          - manifests/s3.yaml

@@ -31,7 +31,7 @@
     "iam:up": "./hack/iam.sh setup",
     "iam:down": "./hack/iam.sh teardown",
     "eks:up": "eksctl create cluster -f eks.yaml",
-    "eks:down": "eksctl delete cluster -f eks.yaml",
+    "eks:down": "eksctl delete cluster -f eks.yaml --disable-nodegroup-eviction",
     "standup:all": "npm run eks:up && npm run iam:up",
     "cleanup:all": "npm run iam:down && npm run eks:down"
   },

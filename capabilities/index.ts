@@ -5,7 +5,7 @@ import { S3 } from "./s3/bucket";
 export const ObjectStorageOperator = new Capability({
   name: "object-storage-operator",
   description: "A Kubernetes Operator for managing object storage buckets.",
-  namespaces: ["storage"],
+  namespaces: ["default"],
 });
 
 const { When } = ObjectStorageOperator;
@@ -18,7 +18,7 @@ RegisterKind(S3Bucket, {
 
 When(S3Bucket)
   .IsCreatedOrUpdated()
-  .InNamespace("storage")
+  .InNamespace("default")
   .Watch(async bucket => {
     const s3 = new S3(bucket.spec.region);
     await s3.createBucket(bucket);
@@ -26,7 +26,7 @@ When(S3Bucket)
 
 When(S3Bucket)
   .IsDeleted()
-  .InNamespace("storage")
+  .InNamespace("default")
   .Watch(async bucket => {
     const s3 = new S3(bucket.spec.region);
     await s3.deleteBucket(bucket);
