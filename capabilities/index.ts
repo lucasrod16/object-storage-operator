@@ -17,7 +17,7 @@ RegisterKind(S3Bucket, {
 });
 
 When(S3Bucket)
-  .IsCreatedOrUpdated()
+  .IsCreated()
   .InNamespace("default")
   .Watch(async bucket => {
     const s3 = new S3(bucket.spec.region);
