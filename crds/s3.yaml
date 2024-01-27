@@ -18,8 +18,14 @@ spec:
               properties:
                 name:
                   type: string
+                  x-kubernetes-validations:
+                    - message: name is immutable
+                      rule: self == oldSelf
                 region:
                   type: string
+                  x-kubernetes-validations:
+                    - message: region is immutable
+                      rule: self == oldSelf
   scope: Namespaced
   names:
     plural: s3buckets

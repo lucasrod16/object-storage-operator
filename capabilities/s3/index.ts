@@ -1,4 +1,4 @@
-import { Capability, RegisterKind, K8s } from "pepr";
+import { Capability, RegisterKind } from "pepr";
 import { S3Bucket } from "./crd";
 import { S3 } from "./bucket";
 
@@ -29,31 +29,6 @@ When(S3Bucket)
   .Watch(async bucket => {
     const s3 = new S3(bucket.spec.region);
     await s3.createBucket(bucket);
-  });
-
-When(S3Bucket)
-  .IsUpdated()
-  .InNamespace("default")
-  .Validate(async request => {
-    const bucket = await K8s(S3Bucket).Get(request.Raw.metadata.name);
-
-    const bucketNameAnnotation =
-      bucket.metadata.annotations[s3BucketNameAnnotation];
-
-    const bucketRegionAnnotation =
-      bucket.metadata.annotations[s3BucketRegionAnnotation];
-
-    if (request.Raw.spec.name !== bucketNameAnnotation) {
-      return request.Deny(
-        "The '.spec.name' field in a S3Bucket resource is immutable.",
-      );
-    }
-
-    if (request.Raw.spec.region !== bucketRegionAnnotation) {
-      return request.Deny(
-        "The '.spec.region' field in a S3Bucket resource is immutable.",
-      );
-    }
   });
 
 When(S3Bucket)
