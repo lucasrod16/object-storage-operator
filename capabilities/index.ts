@@ -22,7 +22,7 @@ RegisterKind(S3Bucket, {
 When(S3Bucket)
   .IsCreated()
   .InNamespace("default")
-  .Mutate(async request => {
+  .Mutate(request => {
     request.SetAnnotation(s3BucketNameAnnotation, request.Raw.spec.name);
     request.SetAnnotation(s3BucketRegionAnnotation, request.Raw.spec.region);
   })
