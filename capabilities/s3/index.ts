@@ -1,17 +1,17 @@
 import { Capability, RegisterKind, K8s } from "pepr";
-import { S3Bucket } from "./s3/crd";
-import { S3 } from "./s3/bucket";
+import { S3Bucket } from "./crd";
+import { S3 } from "./bucket";
 
 const s3BucketNameAnnotation = "dashdays.dev/s3bucket-name";
 const s3BucketRegionAnnotation = "dashdays.dev/s3bucket-region";
 
-export const ObjectStorageOperator = new Capability({
-  name: "object-storage-operator",
-  description: "A Kubernetes Operator for managing object storage buckets.",
+export const awsS3 = new Capability({
+  name: "aws-s3",
+  description: "Manages object storage buckets in AWS S3.",
   namespaces: ["default"],
 });
 
-const { When } = ObjectStorageOperator;
+const { When } = awsS3;
 
 RegisterKind(S3Bucket, {
   group: "dashdays.dev",
