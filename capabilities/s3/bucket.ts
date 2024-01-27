@@ -6,7 +6,7 @@ import {
   DeleteBucketCommandInput,
 } from "@aws-sdk/client-s3";
 import { ObjectStorage } from "../ObjectStorage";
-import { S3Bucket } from "./crd";
+import { S3Bucket } from "./s3bucket-v1";
 import { generateHash } from "../lib/utils";
 import { Log } from "pepr";
 

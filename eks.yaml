@@ -16,7 +16,7 @@ addons:
       - arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy
 
 managedNodeGroups:
-- instanceType: t3.small
+- instanceType: t3.xlarge
   name: object-storage-operator-dev-ng
   minSize: 3
   maxSize: 6

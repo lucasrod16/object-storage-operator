@@ -26,6 +26,8 @@ spec:
                   x-kubernetes-validations:
                     - message: region is immutable
                       rule: self == oldSelf
+          required:
+            - spec
   scope: Namespaced
   names:
     plural: s3buckets

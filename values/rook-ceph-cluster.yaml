@@ -1,0 +1,58 @@
+# -- Namespace of the main rook operator
+operatorNamespace: rook-ceph
+
+# All values below are taken from the CephCluster CRD
+# -- Cluster configuration.
+# @default -- See [below](#ceph-cluster-spec)
+cephClusterSpec:
+  # This cluster spec example is for a converged cluster where all the Ceph daemons are running locally,
+  # as in the host-based example (cluster.yaml). For a different configuration such as a
+  # PVC-based cluster (cluster-on-pvc.yaml), external cluster (cluster-external.yaml),
+  # or stretch cluster (cluster-stretched.yaml), replace this entire `cephClusterSpec`
+  # with the specs from those examples.
+
+  # For more details, check https://rook.io/docs/rook/v1.10/CRDs/Cluster/ceph-cluster-crd/
+  cephVersion:
+    image: quay.io/ceph/ceph:v18.2.1
+
+  # The path on the host where configuration files will be persisted. Must be specified.
+  # Important: if you reinstall the cluster, make sure you delete this directory from each host or else the mons will fail to start on the new cluster.
+  # In Minikube, the '/data' directory is configured to persist across reboots. Use "/data/rook" in Minikube environment.
+  dataDirHostPath: /var/lib/rook
+
+# -- A list of CephObjectStore configurations to deploy
+# @default -- See [below](#ceph-object-stores)
+cephObjectStores:
+  - name: ceph-objectstore
+    # see https://github.com/rook/rook/blob/master/Documentation/CRDs/Object-Storage/ceph-object-store-crd.md#object-store-settings for available configuration
+    spec:
+      metadataPool:
+        failureDomain: host
+        replicated:
+          size: 3
+      dataPool:
+        failureDomain: host
+        erasureCoded:
+          dataChunks: 2
+          codingChunks: 1
+      preservePoolsOnDelete: true
+      gateway:
+        port: 80
+        resources:
+          limits:
+            cpu: "2000m"
+            memory: "2Gi"
+          requests:
+            cpu: "1000m"
+            memory: "1Gi"
+        instances: 1
+        priorityClassName: system-cluster-critical
+    storageClass:
+      enabled: true
+      name: ceph-bucket
+      reclaimPolicy: Delete
+      volumeBindingMode: "Immediate"
+      # see https://github.com/rook/rook/blob/master/Documentation/Storage-Configuration/Object-Storage-RGW/ceph-object-bucket-claim.md#storageclass for available configuration
+      parameters:
+        # note: objectStoreNamespace and objectStoreName are configured by the chart
+        region: us-west-2
