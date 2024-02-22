@@ -21,7 +21,7 @@ components:
         files:
           - crds/s3.yaml
     images:
-      - ghcr.io/defenseunicorns/pepr/controller:v0.23.1
+      - ghcr.io/defenseunicorns/pepr/controller:v0.26.2
 
   - name: rook-ceph
     charts:
