@@ -37,8 +37,8 @@
     "cleanup:aws": "npm run iam:down && npm run eks:down"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.499.0",
-    "pepr": "0.23.1"
+    "@aws-sdk/client-s3": "^3.515.0",
+    "pepr": "^0.26.2"
   },
   "devDependencies": {
     "typescript": "5.3.3"
